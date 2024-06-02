@@ -1,0 +1,24 @@
+#pragma kernel CSMain
+
+RWTexture2D<float4> NoiseTexture;
+
+float Rand01(uint seed)                       // Function from ChatGPT
+{
+    seed = (seed ^ 61) ^ (seed >> 16);
+    seed = seed + (seed << 3);
+    seed = seed ^ (seed >> 4);
+    seed = seed * 0x27d4eb2d;
+    seed = seed ^ (seed >> 15);
+    
+    return float(seed) / float(0xFFFFFFFF);
+}
+
+[numthreads(8,8,1)]
+void CSMain (uint3 id : SV_DispatchThreadID)
+{
+    uint seed = id.x + id.y * 57 + id.z * 131;
+    bool isValid = 0.5 < Rand01(seed);
+
+    float4 color = isValid ? float4(1, 1, 1, 1) : float4(0, 0, 0, 1);
+    NoiseTexture[id.xy] = color;
+}
