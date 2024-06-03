@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEditor;
 using UnityEngine;
 
+// Class not really needed :P -> allthough it was a nice asset creation exercise
 public class NoiseGenerator : MonoBehaviour
 {
     const int _textureResolution = 1024;
@@ -20,6 +21,7 @@ public class NoiseGenerator : MonoBehaviour
         // Initialize shader
         ComputeShader noiseShader = AssetDatabase.LoadAssetAtPath<ComputeShader>(_computeShaderString);
         int kernelID = noiseShader.FindKernel("CSMain");
+        noiseShader.SetInt("TextureResolution", _textureResolution);
         noiseShader.SetTexture(kernelID, "NoiseTexture", noiseRenderTexture);
 
         // Dispatch shader
