@@ -3,13 +3,17 @@ Shader "Unlit/ShellTexture"
     Properties
     {
         _Density("Density", int) = 256
+        _ShellHeight("Shell Height", float) = 1.0
     }
     SubShader
     {
         Pass
         {
+            Cull Off
+
             CGPROGRAM
             #pragma vertex vert
+            #pragma geometry geom
             #pragma fragment frag
 
             #include "UnityCG.cginc"
@@ -21,12 +25,21 @@ Shader "Unlit/ShellTexture"
             struct VertexIN
             {
                 float4 vertex : POSITION;
+                float3 normal : NORMAL;
                 float2 uv : TEXCOORD0;
             };
 
-            struct VertexOUT
+            struct GeometryIN
+            {
+                float4 vertex : POSITION;
+                float3 normal : NORMAL;
+                float2 uv : TEXCOORD0;
+            };
+
+            struct FragIN
             {
                 float4 vertex : SV_POSITION;
+                float3 normal : NORMAL;
                 float2 uv : TEXCOORD0;
             };
 
@@ -35,6 +48,7 @@ Shader "Unlit/ShellTexture"
             ////////////////////////////////////////////////////////////
 
             int _Density;
+            float _ShellHeight;
 
             ////////////////////////////////////////////////////////////
             // ---------------------------------------------------------
@@ -52,18 +66,57 @@ Shader "Unlit/ShellTexture"
             // ---------------------------------------------------------
             ////////////////////////////////////////////////////////////
 
-            VertexOUT vert (VertexIN v)
+            GeometryIN vert (VertexIN v)
             {
-                VertexOUT o;
+                GeometryIN o;
 
                 // Transform
                 o.vertex = UnityObjectToClipPos(v.vertex);
+                o.normal = v.normal;
                 o.uv = v.uv;
 
                 return o;
             }
 
-            fixed4 frag (VertexOUT i) : SV_Target
+            [maxvertexcount(6)]                                                                 // Max 6 vertices as input (you can append less than this amount)
+            void geom(triangle GeometryIN input[3], inout TriangleStream<FragIN> triStream)     // 3 vertices received as parameter -> triangle
+            {
+                // Original vertex
+                // ---------------
+                for (int i = 0; i < 3; ++i)
+                {
+                    FragIN output;
+                    
+                    // Pass values
+                    output.vertex = input[i].vertex;
+                    output.normal = input[i].normal;
+                    output.uv = input[i].uv;
+                    
+                    // Append
+                    triStream.Append(output);
+                }
+
+                // Extra vertex
+                // ------------
+                for (int i = 0; i < 3; ++i)
+                {
+                     FragIN output;
+
+                    // Transform vertex height
+                    float4 startPos = input[i].vertex;
+                    startPos.xyz += input[i].normal * _ShellHeight;
+                    output.vertex = startPos;
+                    
+                    // Pass values
+                    output.normal = input[i].normal;
+                    output.uv = input[i].uv;
+
+                    // Append
+                    triStream.Append(output);
+                }
+            }
+
+            fixed4 frag (FragIN i) : SV_Target
             {
                 // Get random value
                 uint2 convertedUV = i.uv * _Density;
