@@ -1,10 +1,5 @@
 Shader "Unlit/ShellTexture"
 {
-    Properties
-    {
-        _Density("Density", int) = 256
-        _ShellHeight("Shell Height", float) = 1.0
-    }
     SubShader
     {
         Pass
@@ -13,7 +8,6 @@ Shader "Unlit/ShellTexture"
 
             CGPROGRAM
             #pragma vertex vert
-            #pragma geometry geom
             #pragma fragment frag
 
             #include "UnityCG.cginc"
@@ -47,8 +41,11 @@ Shader "Unlit/ShellTexture"
             // ---------------------------------------------------------
             ////////////////////////////////////////////////////////////
 
+            int _NrShells;
+            int _ShellIdx;
+
             int _Density;
-            float _ShellHeight;
+            float _FullHeight;
 
             ////////////////////////////////////////////////////////////
             // ---------------------------------------------------------
@@ -70,50 +67,18 @@ Shader "Unlit/ShellTexture"
             {
                 GeometryIN o;
 
-                // Transform
-                o.vertex = UnityObjectToClipPos(v.vertex);
+                // Offset vertexPosition
+                float deltaHeight = _FullHeight / _NrShells;
+
+                float4 vertexPosition = UnityObjectToClipPos(v.vertex);
+                vertexPosition.xyz += _ShellIdx * deltaHeight * v.normal;
+                o.vertex =  vertexPosition;
+                
+                // Pass values
                 o.normal = v.normal;
                 o.uv = v.uv;
 
                 return o;
-            }
-
-            [maxvertexcount(6)]                                                                 // Max 6 vertices as input (you can append less than this amount)
-            void geom(triangle GeometryIN input[3], inout TriangleStream<FragIN> triStream)     // 3 vertices received as parameter -> triangle
-            {
-                // Original vertex
-                // ---------------
-                for (int i = 0; i < 3; ++i)
-                {
-                    FragIN output;
-                    
-                    // Pass values
-                    output.vertex = input[i].vertex;
-                    output.normal = input[i].normal;
-                    output.uv = input[i].uv;
-                    
-                    // Append
-                    triStream.Append(output);
-                }
-
-                // Extra vertex
-                // ------------
-                for (int i = 0; i < 3; ++i)
-                {
-                     FragIN output;
-
-                    // Transform vertex height
-                    float4 startPos = input[i].vertex;
-                    startPos.xyz += input[i].normal * _ShellHeight;
-                    output.vertex = startPos;
-                    
-                    // Pass values
-                    output.normal = input[i].normal;
-                    output.uv = input[i].uv;
-
-                    // Append
-                    triStream.Append(output);
-                }
             }
 
             fixed4 frag (FragIN i) : SV_Target
@@ -121,6 +86,9 @@ Shader "Unlit/ShellTexture"
                 // Get random value
                 uint2 convertedUV = i.uv * _Density;
                 uint seed = convertedUV.x + convertedUV.y * _Density;
+
+                // Check if valid
+
                 bool isValid = 0.5 < Hash(seed);
 
                 // Set color
