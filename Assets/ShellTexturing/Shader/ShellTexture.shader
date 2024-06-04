@@ -44,6 +44,7 @@ Shader "Unlit/ShellTexture"
             int _NrShells;
             int _ShellIdx;
 
+            float4 _TextureColor;
             int _Density;
             float _FullHeight;
             float _MinSeedRange, _MaxSeedRange;
@@ -86,7 +87,7 @@ Shader "Unlit/ShellTexture"
                 return o;
             }
 
-            fixed4 frag (FragIN i) : SV_Target
+            float4 frag (FragIN i) : SV_Target
             {
                 // Get random value
                 uint2 convertedUV = i.uv * _Density;
@@ -99,9 +100,9 @@ Shader "Unlit/ShellTexture"
                 if(!isValid) discard;
 
                 // Set color
-                fixed4 textureColor = fixed4(1, 1, 1, 1);
-                textureColor *= lerpValue;
-                return textureColor;
+                float4 finalColor = _TextureColor * lerpValue;
+                finalColor.a = 1;
+                return finalColor;
             }
 
             ENDCG

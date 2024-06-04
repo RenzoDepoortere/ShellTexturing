@@ -8,7 +8,8 @@ public class ShellTexture : MonoBehaviour
     [SerializeField] private Shader _shellShader;
 
     [Header("Settings")]
-    [SerializeField] private int _nrShells = 2;
+    [SerializeField] private Color _textureColor = new Color(0.63f, 0.32f, 0.18f);
+    [SerializeField] private int _nrShells = 24;
     [SerializeField] private int _density = 256;
     [SerializeField] private float _fullHeight = 1f;
     [SerializeField] private Vector2 _seedRange = new Vector2(0.1f, 0.8f);
@@ -40,7 +41,7 @@ public class ShellTexture : MonoBehaviour
         {
             // GameObject
             createdShell = new GameObject($"Shell_{idx + 1}");
-            createdShell.transform.SetParent(transform);
+            createdShell.transform.SetParent(transform, false);
             _shells[idx] = createdShell;
 
             // Renderer
@@ -61,6 +62,7 @@ public class ShellTexture : MonoBehaviour
         material.SetInt("_NrShells", _nrShells);
         material.SetInt("_ShellIdx", idx);
 
+        material.SetColor("_TextureColor", _textureColor);
         material.SetInt("_Density", _density);
         material.SetFloat("_FullHeight", _fullHeight);
         material.SetFloat("_MinSeedRange", _seedRange.x);

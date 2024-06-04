@@ -298,6 +298,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _shellShader: {fileID: 4800000, guid: 0bafd30949afd5d47afbb9f28c03a0a3, type: 3}
+  _textureColor: {r: 0.5698112, g: 0.38263315, b: 0.31715906, a: 1}
   _nrShells: 24
   _density: 256
   _fullHeight: 1
