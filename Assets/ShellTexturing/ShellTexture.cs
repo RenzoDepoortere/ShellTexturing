@@ -11,6 +11,7 @@ public class ShellTexture : MonoBehaviour
     [SerializeField] private int _nrShells = 2;
     [SerializeField] private int _density = 256;
     [SerializeField] private float _fullHeight = 1f;
+    [SerializeField] private Vector2 _seedRange = new Vector2(0.1f, 0.8f);
 
     private MeshRenderer _meshRenderer;
     private MeshFilter _meshFilter;
@@ -35,10 +36,10 @@ public class ShellTexture : MonoBehaviour
         MeshFilter createdFilter;
 
         // Create layers
-        for (int idx = 1; idx < _nrShells; ++idx)
+        for (int idx = 0; idx < _nrShells; ++idx)
         {
             // GameObject
-            createdShell = new GameObject($"Shell_{idx}");
+            createdShell = new GameObject($"Shell_{idx + 1}");
             createdShell.transform.SetParent(transform);
             _shells[idx] = createdShell;
 
@@ -51,7 +52,7 @@ public class ShellTexture : MonoBehaviour
             createdFilter.mesh = _meshFilter.sharedMesh;
 
             // Material
-            SetShaderSettings(createdRenderer.material, idx);
+            SetShaderSettings(createdRenderer.material, idx + 1);
         }
     }
 
@@ -62,5 +63,7 @@ public class ShellTexture : MonoBehaviour
 
         material.SetInt("_Density", _density);
         material.SetFloat("_FullHeight", _fullHeight);
+        material.SetFloat("_MinSeedRange", _seedRange.x);
+        material.SetFloat("_MaxSeedRange", _seedRange.y);
     }
 }

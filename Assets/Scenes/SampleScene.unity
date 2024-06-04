@@ -298,9 +298,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _shellShader: {fileID: 4800000, guid: 0bafd30949afd5d47afbb9f28c03a0a3, type: 3}
-  _nrShells: 2
+  _nrShells: 24
   _density: 256
-  _shellHeight: 1
+  _fullHeight: 1
+  _seedRange: {x: 0.1, y: 0.8}
 --- !u!1 &705507993
 GameObject:
   m_ObjectHideFlags: 0

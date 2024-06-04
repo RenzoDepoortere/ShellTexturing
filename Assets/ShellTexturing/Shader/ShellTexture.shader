@@ -46,6 +46,7 @@ Shader "Unlit/ShellTexture"
 
             int _Density;
             float _FullHeight;
+            float _MinSeedRange, _MaxSeedRange;
 
             ////////////////////////////////////////////////////////////
             // ---------------------------------------------------------
@@ -68,11 +69,15 @@ Shader "Unlit/ShellTexture"
                 GeometryIN o;
 
                 // Offset vertexPosition
-                float deltaHeight = _FullHeight / _NrShells;
+                float4 vertexPosition = v.vertex;
 
-                float4 vertexPosition = UnityObjectToClipPos(v.vertex);
-                vertexPosition.xyz += _ShellIdx * deltaHeight * v.normal;
-                o.vertex =  vertexPosition;
+                if (0 < _NrShells)
+                {
+                    float deltaHeight = _FullHeight / _NrShells;
+                    vertexPosition.xyz += _ShellIdx * deltaHeight * v.normal;
+                }
+
+                o.vertex =  UnityObjectToClipPos(vertexPosition);
                 
                 // Pass values
                 o.normal = v.normal;
@@ -87,13 +92,16 @@ Shader "Unlit/ShellTexture"
                 uint2 convertedUV = i.uv * _Density;
                 uint seed = convertedUV.x + convertedUV.y * _Density;
 
-                // Check if valid
-
-                bool isValid = 0.5 < Hash(seed);
+                // Check if valid pixel
+                float lerpValue = (float) _ShellIdx / _NrShells;
+                float minValue = lerp(_MinSeedRange, _MaxSeedRange, lerpValue);
+                bool isValid = minValue < Hash(seed);
+                if(!isValid) discard;
 
                 // Set color
-                fixed4 col = isValid ? fixed4(1, 1, 1, 1) : fixed4(0, 0, 0, 1);
-                return col;
+                fixed4 textureColor = fixed4(1, 1, 1, 1);
+                textureColor *= lerpValue;
+                return textureColor;
             }
 
             ENDCG
