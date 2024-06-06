@@ -12,6 +12,7 @@ public class ShellTexture : MonoBehaviour
     [SerializeField] private int _nrShells = 24;
     [SerializeField] private int _density = 256;
     [SerializeField] private float _fullHeight = 1f;
+    [SerializeField] private float _thickness = 1f;
     [SerializeField] private Vector2 _seedRange = new Vector2(0.1f, 0.8f);
 
     private MeshRenderer _meshRenderer;
@@ -65,6 +66,7 @@ public class ShellTexture : MonoBehaviour
         material.SetColor("_TextureColor", _textureColor);
         material.SetInt("_Density", _density);
         material.SetFloat("_FullHeight", _fullHeight);
+        material.SetFloat("_Thickness", _thickness);
         material.SetFloat("_MinSeedRange", _seedRange.x);
         material.SetFloat("_MaxSeedRange", _seedRange.y);
     }

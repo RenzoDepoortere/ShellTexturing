@@ -47,6 +47,7 @@ Shader "Unlit/ShellTexture"
             float4 _TextureColor;
             int _Density;
             float _FullHeight;
+            float _Thickness;
             float _MinSeedRange, _MaxSeedRange;
 
             ////////////////////////////////////////////////////////////
@@ -89,15 +90,28 @@ Shader "Unlit/ShellTexture"
 
             float4 frag (FragIN i) : SV_Target
             {
+                // Calculate distance from center
+                float2 convertedUV = i.uv * _Density;
+                float2 localPos = frac(convertedUV) * 2 - 1;
+                float distanceFromCenter = length(localPos);
+
                 // Get random value
-                uint2 convertedUV = i.uv * _Density;
-                uint seed = convertedUV.x + convertedUV.y * _Density;
+                uint2 seedUV = convertedUV;
+                uint seed = seedUV.x + seedUV.y * _Density;
+                float randomValue = Hash(seed);
 
                 // Check if valid pixel
                 float lerpValue = (float) _ShellIdx / _NrShells;
-                float minValue = lerp(_MinSeedRange, _MaxSeedRange, lerpValue);
-                bool isValid = minValue < Hash(seed);
+                float shellHeight = lerp(_MinSeedRange, _MaxSeedRange, lerpValue);
+
+                bool isValid = shellHeight < randomValue;
                 if(!isValid) discard;
+
+                // Check if valid thickness
+                float thicknessOffset = lerp(_MinSeedRange, _MaxSeedRange, randomValue);
+
+                bool isValidThickness = distanceFromCenter < _Thickness * (thicknessOffset - lerpValue);
+                if (!isValidThickness) discard;
 
                 // Set color
                 float4 finalColor = _TextureColor * lerpValue;
