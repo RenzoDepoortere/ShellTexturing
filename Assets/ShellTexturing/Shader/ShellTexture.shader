@@ -11,8 +11,9 @@ Shader "Unlit/ShellTexture"
             #pragma fragment frag
 
             #include "UnityCG.cginc"
+            #include "UnityPBSLighting.cginc"
 
-             ////////////////////////////////////////////////////////////
+            ////////////////////////////////////////////////////////////
             // ---------------------------------------------------------
             ////////////////////////////////////////////////////////////
 
@@ -113,8 +114,11 @@ Shader "Unlit/ShellTexture"
                 bool isValidThickness = distanceFromCenter < _Thickness * (thicknessOffset - lerpValue);
                 if (!isValidThickness) discard;
 
-                // Set color
-                float4 finalColor = _TextureColor * lerpValue;
+                // Calculate finalColor
+                float4 defaultHairColor = _TextureColor /* * lerpValue */;                      // LerpValue for making hair darker near bottom
+                float halfLambert = DotClamped(i.normal, _WorldSpaceLightPos0) * 0.5 + 0.5;     // DotClamped for making shadows even softer
+
+                float4 finalColor = defaultHairColor * (halfLambert * halfLambert);
                 finalColor.a = 1;
                 return finalColor;
             }

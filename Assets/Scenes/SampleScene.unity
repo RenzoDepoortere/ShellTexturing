@@ -241,7 +241,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _shellShader: {fileID: 4800000, guid: 0bafd30949afd5d47afbb9f28c03a0a3, type: 3}
   _textureColor: {r: 0.509434, g: 0.25366336, b: 0.14898534, a: 1}
-  _nrShells: 48
+  _nrShells: 46
   _density: 256
   _fullHeight: 0.4
   _thickness: 3
@@ -260,31 +260,31 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2671313258676373185, guid: a510364a46b2ed14b95cdf6c917ba643, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 2.77
+      value: 0.5
       objectReference: {fileID: 0}
     - target: {fileID: 2671313258676373185, guid: a510364a46b2ed14b95cdf6c917ba643, type: 3}
       propertyPath: m_LocalPosition.z
-      value: 0
+      value: -2
       objectReference: {fileID: 0}
     - target: {fileID: 2671313258676373185, guid: a510364a46b2ed14b95cdf6c917ba643, type: 3}
       propertyPath: m_LocalRotation.w
-      value: 1
+      value: 0.9941701
       objectReference: {fileID: 0}
     - target: {fileID: 2671313258676373185, guid: a510364a46b2ed14b95cdf6c917ba643, type: 3}
       propertyPath: m_LocalRotation.x
-      value: 0
+      value: 0.1078229
       objectReference: {fileID: 0}
     - target: {fileID: 2671313258676373185, guid: a510364a46b2ed14b95cdf6c917ba643, type: 3}
       propertyPath: m_LocalRotation.y
-      value: 0
+      value: -0
       objectReference: {fileID: 0}
     - target: {fileID: 2671313258676373185, guid: a510364a46b2ed14b95cdf6c917ba643, type: 3}
       propertyPath: m_LocalRotation.z
-      value: 0
+      value: -0
       objectReference: {fileID: 0}
     - target: {fileID: 2671313258676373185, guid: a510364a46b2ed14b95cdf6c917ba643, type: 3}
       propertyPath: m_LocalEulerAnglesHint.x
-      value: 0
+      value: 12.38
       objectReference: {fileID: 0}
     - target: {fileID: 2671313258676373185, guid: a510364a46b2ed14b95cdf6c917ba643, type: 3}
       propertyPath: m_LocalEulerAnglesHint.y
