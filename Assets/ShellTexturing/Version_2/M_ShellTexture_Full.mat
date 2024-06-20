@@ -29,6 +29,7 @@ Material:
         m_Offset: {x: 0, y: 0}
     m_Ints:
     - _Density: 440
+    - _FillBottom: 2
     - _LayerCount: 40
     m_Floats:
     - _FullHeight: 0.16

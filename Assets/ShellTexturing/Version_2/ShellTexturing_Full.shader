@@ -4,6 +4,7 @@ Shader "Unlit/ShellTexturing_Full"
     {
         _TopHairColor ("Color", Color) = (1, 1, 1, 1)
         _BotHairColor ("Color", Color) = (0, 0, 0, 1)
+        _FillBottom ("Fill Bottom", Integer) = 1
 
         _Density ("Density", Integer) = 256
         _LayerCount ("Layer Count", Integer) = 1
@@ -33,6 +34,7 @@ Shader "Unlit/ShellTexturing_Full"
 
             float4 _TopHairColor;
             float4 _BotHairColor;
+            int _FillBottom;
 
             int _Density;
             int _LayerCount;
@@ -76,6 +78,12 @@ Shader "Unlit/ShellTexturing_Full"
                 n = (n << 13U) ^ n;
                 n = n * (n * n * 15731U + 0x789221U) + 0x1376312589U;
                 return float(n & uint(0x7fffffffU)) / float(0x7fffffff);
+            }
+
+            float HalfLambert(float3 normal)
+            {
+                float halfLambert = DotClamped(normal, _WorldSpaceLightPos0) * 0.5 + 0.5;     // DotClamped for making shadows even softer
+                return halfLambert * halfLambert;
             }
 
             ////////////////////////////////////////////////////////////
@@ -135,6 +143,13 @@ Shader "Unlit/ShellTexturing_Full"
 
             float4 frag (FragIN input) : SV_Target
             {
+                // Check for bottomLayer
+                // ---------------------
+                if (1 <= _FillBottom && input.layerIdx == 0)
+                {
+                    return _BotHairColor;
+                }
+
                 // Get values
                 // ----------
 
@@ -168,10 +183,8 @@ Shader "Unlit/ShellTexturing_Full"
                 // Calculate finalColor
                 // --------------------
                 float4 defaultHairColor = lerp(_BotHairColor, _TopHairColor, lerpValue);            // Lerp between bottom and top
-                float halfLambert = DotClamped(input.normal, _WorldSpaceLightPos0) * 0.5 + 0.5;     // DotClamped for making shadows even softer
-
-                float4 finalColor = defaultHairColor * (halfLambert * halfLambert);
-                finalColor.a = 1;
+                float4 finalColor = defaultHairColor * HalfLambert(input.normal);
+                finalColor.a = defaultHairColor.a;
                 return finalColor;
             }
             ENDCG
