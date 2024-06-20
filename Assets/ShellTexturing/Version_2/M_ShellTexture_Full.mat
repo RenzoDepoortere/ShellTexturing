@@ -23,13 +23,17 @@ Material:
   m_SavedProperties:
     serializedVersion: 3
     m_TexEnvs:
+    - _HeightMap:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
     - _MainTex:
         m_Texture: {fileID: 2800000, guid: a0c29fbe43a722041b6477f0f565d631, type: 2}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     m_Ints:
     - _Density: 440
-    - _FillBottom: 2
+    - _FillBottom: 1
     - _LayerCount: 40
     m_Floats:
     - _FullHeight: 0.16

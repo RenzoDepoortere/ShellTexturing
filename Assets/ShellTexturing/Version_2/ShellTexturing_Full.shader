@@ -2,6 +2,8 @@ Shader "Unlit/ShellTexturing_Full"
 {
     Properties
     {
+        _HeightMap ("Height Map", 2D) = "white" {}
+
         _TopHairColor ("Color", Color) = (1, 1, 1, 1)
         _BotHairColor ("Color", Color) = (0, 0, 0, 1)
         _FillBottom ("Fill Bottom", Integer) = 1
@@ -31,6 +33,8 @@ Shader "Unlit/ShellTexturing_Full"
             ////////////////////////////////////////////////////////////
             // ---------------------------------------------------------
             ////////////////////////////////////////////////////////////
+
+            sampler2D _HeightMap;
 
             float4 _TopHairColor;
             float4 _BotHairColor;
@@ -158,18 +162,22 @@ Shader "Unlit/ShellTexturing_Full"
                 float2 localPos = frac(convertedUV) * 2 - 1;
                 float distanceFromCenter = length(localPos);
 
+                // Sample Map
+                float4 heightColor = tex2D(_HeightMap, input.uv);
+
                 // Get random value
                 uint2 seedUV = convertedUV;
                 uint seed = seedUV.x + seedUV.y * _Density;
-                float randomValue = Hash(seed);
+                float randomValue = Hash(seed) * heightColor.r;
 
                 // Height & Thickness
                 // ------------------
 
-                // Check if valid pixel
+                // Get shellHeight
                 float lerpValue = (float) input.layerIdx / _LayerCount;
                 float shellHeight = lerp(_MinSeedRange, _MaxSeedRange, lerpValue);
 
+                // Check if valid height
                 bool isValid = shellHeight < randomValue;
                 if (!isValid) discard;
 
@@ -182,7 +190,7 @@ Shader "Unlit/ShellTexturing_Full"
 
                 // Calculate finalColor
                 // --------------------
-                float4 defaultHairColor = lerp(_BotHairColor, _TopHairColor, lerpValue);            // Lerp between bottom and top
+                float4 defaultHairColor = lerp(_BotHairColor, _TopHairColor, lerpValue);    // Lerp between bottom and top
                 float4 finalColor = defaultHairColor * HalfLambert(input.normal);
                 finalColor.a = defaultHairColor.a;
                 return finalColor;
