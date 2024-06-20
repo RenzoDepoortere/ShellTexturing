@@ -16,6 +16,8 @@ Shader "Unlit/ShellTexturing_Full"
         _Thickness ("Thickness", float) = 1
         _MinSeedRange ("Min Seed Range", float) = 0.1
         _MaxSeedRange ("Max Seed Range", float) = 0.8
+
+        _GravityInfluence ("Gravity Influence", float) = 0.1
     }
     SubShader
     {
@@ -50,6 +52,8 @@ Shader "Unlit/ShellTexturing_Full"
             float _MinSeedRange;
             float _MaxSeedRange;
 
+            float _GravityInfluence;
+
             ////////////////////////////////////////////////////////////
             // ---------------------------------------------------------
             ////////////////////////////////////////////////////////////
@@ -71,7 +75,7 @@ Shader "Unlit/ShellTexturing_Full"
                 float4 vertex : SV_POSITION;
                 float3 normal : NORMAL;
                 float2 uv : TEXCOORD0;
-                int layerIdx : ID;
+                int layerID : ID;
             };
 
             ////////////////////////////////////////////////////////////
@@ -117,29 +121,33 @@ Shader "Unlit/ShellTexturing_Full"
                     output.vertex = UnityObjectToClipPos(input[i].vertex);
                     output.normal = input[i].normal;
                     output.uv = input[i].uv;
-                    output.layerIdx = 0;
+                    output.layerID = 0;
 
                     triStream.Append(output);
                 }
 
                 // Layered verts
                 // -------------
-                float deltaHeight = _FullHeight / _LayerCount;
+                float4 gravityDirection = float4(0, -1, 0, 0);
 
                 for (int i = 0; i < _LayerCount; ++i)
                 {
                     for (int v = 0; v < 3; ++v)
                     {
+                        float lerpValue = (float) i / _LayerCount;
+                        lerpValue = 1 - pow(1 - lerpValue, 4);
+
                         // Position
                         FragIN output;
                         output.vertex = input[v].vertex;
-                        output.vertex.xyz += input[v].normal * i * deltaHeight;
+                        output.vertex.xyz += input[v].normal * lerpValue * _FullHeight;         // Normal
+                        output.vertex.xyz += gravityDirection * lerpValue * _GravityInfluence;  // Physics
                         output.vertex = UnityObjectToClipPos(output.vertex);
 
                         // Other
                         output.normal = input[v].normal;
                         output.uv = input[v].uv;
-                        output.layerIdx = i + 1;
+                        output.layerID = i + 1;
 
                         // Append
                         triStream.Append(output);
@@ -153,7 +161,7 @@ Shader "Unlit/ShellTexturing_Full"
                 // ---------------------
                 
                 float4 textureColor = tex2D(_TextureMap, input.uv);
-                if (1 <= _FillBottom && input.layerIdx == 0)
+                if (1 <= _FillBottom && input.layerID == 0)
                     return _BotHairColor * textureColor;
 
                 // Get values
@@ -176,7 +184,7 @@ Shader "Unlit/ShellTexturing_Full"
                 // ------------------
 
                 // Get shellHeight
-                float lerpValue = (float) input.layerIdx / _LayerCount;
+                float lerpValue = (float) input.layerID / _LayerCount;
                 float shellHeight = lerp(_MinSeedRange, _MaxSeedRange, lerpValue);
 
                 // Check if valid height

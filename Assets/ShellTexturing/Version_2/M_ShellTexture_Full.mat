@@ -36,15 +36,16 @@ Material:
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     m_Ints:
-    - _Density: 440
+    - _Density: 400
     - _FillBottom: 1
     - _LayerCount: 40
     m_Floats:
     - _FullHeight: 0.16
+    - _GravityInfluence: 0.1
     - _LayerCount: 4.79
     - _LayerHeight: 0.03
-    - _MaxSeedRange: 0.8
-    - _MinSeedRange: 0.1
+    - _MaxSeedRange: 1
+    - _MinSeedRange: 0
     - _Thickness: 2.12
     m_Colors:
     - _BotHairColor: {r: 0.79622644, g: 0.79622644, b: 0.79622644, a: 1}
