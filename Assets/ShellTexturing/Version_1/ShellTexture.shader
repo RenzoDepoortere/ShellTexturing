@@ -24,13 +24,6 @@ Shader "Unlit/ShellTexture"
                 float2 uv : TEXCOORD0;
             };
 
-            struct GeometryIN
-            {
-                float4 vertex : POSITION;
-                float3 normal : NORMAL;
-                float2 uv : TEXCOORD0;
-            };
-
             struct FragIN
             {
                 float4 vertex : SV_POSITION;
@@ -67,11 +60,11 @@ Shader "Unlit/ShellTexture"
             // ---------------------------------------------------------
             ////////////////////////////////////////////////////////////
 
-            GeometryIN vert (VertexIN v)
+            FragIN vert (VertexIN v)
             {
-                GeometryIN o;
+                FragIN o;
 
-                // Offset vertexPosition
+                // Offset vertexPosition along normal
                 float4 vertexPosition = v.vertex;
 
                 if (0 < _NrShells)
@@ -91,6 +84,9 @@ Shader "Unlit/ShellTexture"
 
             float4 frag (FragIN i) : SV_Target
             {
+                // Get values
+                // ----------
+
                 // Calculate distance from center
                 float2 convertedUV = i.uv * _Density;
                 float2 localPos = frac(convertedUV) * 2 - 1;
@@ -100,6 +96,9 @@ Shader "Unlit/ShellTexture"
                 uint2 seedUV = convertedUV;
                 uint seed = seedUV.x + seedUV.y * _Density;
                 float randomValue = Hash(seed);
+
+                // Height & Thickness
+                // ------------------
 
                 // Check if valid pixel
                 float lerpValue = (float) _ShellIdx / _NrShells;
@@ -114,7 +113,9 @@ Shader "Unlit/ShellTexture"
                 bool isValidThickness = distanceFromCenter < _Thickness * (thicknessOffset - lerpValue);
                 if (!isValidThickness) discard;
 
+
                 // Calculate finalColor
+                // --------------------
                 float4 defaultHairColor = _TextureColor /* * lerpValue */;                      // LerpValue for making hair darker near bottom
                 float halfLambert = DotClamped(i.normal, _WorldSpaceLightPos0) * 0.5 + 0.5;     // DotClamped for making shadows even softer
 
