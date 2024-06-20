@@ -2,10 +2,11 @@ Shader "Unlit/ShellTexturing_Full"
 {
     Properties
     {
+        _TextureMap ("Texture Map", 2D) = "white" {}
         _HeightMap ("Height Map", 2D) = "white" {}
 
-        _TopHairColor ("Color", Color) = (1, 1, 1, 1)
-        _BotHairColor ("Color", Color) = (0, 0, 0, 1)
+        _TopHairColor ("Top Hair Color", Color) = (1, 1, 1, 1)
+        _BotHairColor ("Bot Hair Color", Color) = (0, 0, 0, 1)
         _FillBottom ("Fill Bottom", Integer) = 1
 
         _Density ("Density", Integer) = 256
@@ -34,6 +35,7 @@ Shader "Unlit/ShellTexturing_Full"
             // ---------------------------------------------------------
             ////////////////////////////////////////////////////////////
 
+            sampler2D _TextureMap;
             sampler2D _HeightMap;
 
             float4 _TopHairColor;
@@ -149,10 +151,10 @@ Shader "Unlit/ShellTexturing_Full"
             {
                 // Check for bottomLayer
                 // ---------------------
+                
+                float4 textureColor = tex2D(_TextureMap, input.uv);
                 if (1 <= _FillBottom && input.layerIdx == 0)
-                {
-                    return _BotHairColor;
-                }
+                    return _BotHairColor * textureColor;
 
                 // Get values
                 // ----------
@@ -190,9 +192,10 @@ Shader "Unlit/ShellTexturing_Full"
 
                 // Calculate finalColor
                 // --------------------
-                float4 defaultHairColor = lerp(_BotHairColor, _TopHairColor, lerpValue);    // Lerp between bottom and top
-                float4 finalColor = defaultHairColor * HalfLambert(input.normal);
-                finalColor.a = defaultHairColor.a;
+
+                float4 lerpedColor = lerp(_BotHairColor, _TopHairColor, lerpValue);    // Lerp between bottom and top
+                float4 finalColor = lerpedColor * textureColor * HalfLambert(input.normal);
+
                 return finalColor;
             }
             ENDCG
