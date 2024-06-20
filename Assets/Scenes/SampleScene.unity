@@ -281,6 +281,10 @@ PrefabInstance:
       propertyPath: 'm_Materials.Array.data[0]'
       value: 
       objectReference: {fileID: 2100000, guid: 52603df2cafac4148a6ec4ca38f82348, type: 2}
+    - target: {fileID: 2302126753033870548, guid: 253d373e4a735874d950a61241fc45c8, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 3292490657820876664, guid: 253d373e4a735874d950a61241fc45c8, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0
@@ -325,9 +329,13 @@ PrefabInstance:
       propertyPath: m_Name
       value: ShellTexture_2
       objectReference: {fileID: 0}
+    - target: {fileID: 6665264521126031446, guid: 253d373e4a735874d950a61241fc45c8, type: 3}
+      propertyPath: 'm_Materials.Array.data[0]'
+      value: 
+      objectReference: {fileID: 2100000, guid: 52603df2cafac4148a6ec4ca38f82348, type: 2}
     - target: {fileID: 6953708582639621437, guid: 253d373e4a735874d950a61241fc45c8, type: 3}
       propertyPath: m_IsActive
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []

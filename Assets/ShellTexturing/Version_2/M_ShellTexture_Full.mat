@@ -19,7 +19,7 @@ Material:
   m_CustomRenderQueue: -1
   stringTagMap: {}
   disabledShaderPasses: []
-  m_LockedProperties: 
+  m_LockedProperties: _Density
   m_SavedProperties:
     serializedVersion: 3
     m_TexEnvs:
@@ -28,10 +28,18 @@ Material:
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     m_Ints:
+    - _Density: 440
     - _LayerCount: 40
     m_Floats:
+    - _FullHeight: 0.16
     - _LayerCount: 4.79
     - _LayerHeight: 0.03
-    m_Colors: []
+    - _MaxSeedRange: 0.8
+    - _MinSeedRange: 0.1
+    - _Thickness: 2.12
+    m_Colors:
+    - _BotHairColor: {r: 0, g: 0, b: 0, a: 1}
+    - _TextureColor: {r: 0.5698112, g: 0.33766535, b: 0.14514053, a: 1}
+    - _TopHairColor: {r: 1, g: 1, b: 1, a: 1}
   m_BuildTextureStacks: []
   m_AllowLocking: 1
