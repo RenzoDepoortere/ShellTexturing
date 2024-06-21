@@ -50,6 +50,7 @@ Material:
     - _LayerHeight: 0.03
     - _MaxSeedRange: 1
     - _MinSeedRange: 0
+    - _MovementInfluence: 0.1
     - _Thickness: 2.12
     m_Colors:
     - _BotHairColor: {r: 0.79622644, g: 0.79622644, b: 0.79622644, a: 1}

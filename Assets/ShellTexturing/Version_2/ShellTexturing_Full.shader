@@ -20,7 +20,7 @@ Shader "Unlit/ShellTexturing_Full"
         _MinSeedRange ("Min Seed Range", float) = 0.1
         _MaxSeedRange ("Max Seed Range", float) = 0.8
 
-        _GravityInfluence ("Gravity Influence", float) = 0.1
+        _MovementInfluence ("Movement Influence", float) = 0.1
     }
     SubShader
     {
@@ -58,7 +58,8 @@ Shader "Unlit/ShellTexturing_Full"
             float _MinSeedRange;
             float _MaxSeedRange;
 
-            float _GravityInfluence;
+            float _MovementInfluence;
+            float3 _MovementDirection;
 
             ////////////////////////////////////////////////////////////
             // ---------------------------------------------------------
@@ -134,8 +135,6 @@ Shader "Unlit/ShellTexturing_Full"
 
                 // Layered verts
                 // -------------
-                float4 gravityDirection = float4(0, -1, 0, 0);
-
                 for (int i = 0; i < _LayerCount; ++i)
                 {
                     for (int v = 0; v < 3; ++v)
@@ -146,8 +145,8 @@ Shader "Unlit/ShellTexturing_Full"
                         // Position
                         FragIN output;
                         output.vertex = input[v].vertex;
-                        output.vertex.xyz += input[v].normal * lerpValue * _FullHeight;         // Normal
-                        output.vertex.xyz += gravityDirection * lerpValue * _GravityInfluence;  // Physics
+                        output.vertex.xyz += input[v].normal * lerpValue * _FullHeight;             // Normal
+                        output.vertex.xyz += _MovementDirection * lerpValue * _MovementInfluence;   // Physics
                         output.vertex = UnityObjectToClipPos(output.vertex);
 
                         // Other
