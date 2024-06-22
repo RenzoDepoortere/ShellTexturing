@@ -9,13 +9,14 @@ Shader "Unlit/ShellTexturing_Full"
         _BottomLayerTexture ("Bottom Layer Texture Map", 2D) = "white" {}
         _BottomLayerColor ("Bottom Layer Color", Color) = (1, 1, 1, 1)
 
-        _TopHairColor ("Top Hair Color", Color) = (1, 1, 1, 1)
         _BotHairColor ("Bot Hair Color", Color) = (0, 0, 0, 1)
+        _TopHairColor ("Top Hair Color", Color) = (1, 1, 1, 1)
 
         _Density ("Density", Integer) = 256
         _LayerCount ("Layer Count", Integer) = 1
         _FullHeight ("FullHeight", float) = 0.5
 
+        _InverseLayerLerp ("Inverse Layer Lerp", Integer) = 1
         _Thickness ("Thickness", float) = 1
         _MinSeedRange ("Min Seed Range", float) = 0.1
         _MaxSeedRange ("Max Seed Range", float) = 0.8
@@ -47,13 +48,14 @@ Shader "Unlit/ShellTexturing_Full"
             sampler2D _BottomLayerTexture;
             float4 _BottomLayerColor;
 
-            float4 _TopHairColor;
             float4 _BotHairColor;
+            float4 _TopHairColor;
 
             int _Density;
             int _LayerCount;
             float _FullHeight;
 
+            int _InverseLayerLerp;
             float _Thickness;
             float _MinSeedRange;
             float _MaxSeedRange;
@@ -140,7 +142,7 @@ Shader "Unlit/ShellTexturing_Full"
                     for (int v = 0; v < 3; ++v)
                     {
                         float lerpValue = (float) i / _LayerCount;
-                        lerpValue = 1 - pow(1 - lerpValue, 4);
+                        if (1 <= _InverseLayerLerp) lerpValue = 1 - pow(1 - lerpValue, 4);
 
                         // Position
                         FragIN output;
